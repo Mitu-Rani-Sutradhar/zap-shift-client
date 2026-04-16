@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "Booking Pick & Drop",
+    "description": "Schedule pickups and deliveries with real-time tracking."
+  },
+  {
+    "id": 2,
+    "title": "Cash On Delivery",
+    "description": "Collect payments securely at the time of delivery."
+  },
+  {
+    "id": 3,
+    "title": "Delivery Hub",
+    "description": "Centralized hubs ensure faster and reliable distribution."
+  },
+  {
+    "id": 4,
+    "title": "Booking SME & Corporate",
+    "description": "Tailored logistics solutions for businesses of all sizes."
+  }
+]
