@@ -2,10 +2,23 @@ import React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useLoaderData } from 'react-router';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAuth from '../../hooks/useAuth';
 
 
 const SendParcel = () => {
-    const {register, handleSubmit, control, formState: { errors }} =  useForm();
+    const {register,
+         handleSubmit, 
+         control,
+        //  formState: { errors }
+        } =  useForm();
+
+const { user } = useAuth();
+
+
+const axiosSecure = useAxiosSecure();
+
+
 
     const serviceCenters =  useLoaderData();
     const regionsDuplicate = serviceCenters.map(center => center.region);
@@ -28,9 +41,9 @@ const SendParcel = () => {
         console.log(data);
         // same dis
         const isDocument = data.parcelType === 'document';
-        console.log(isDocument);
+        // console.log(isDocument);
         const isSameDistrict = data.senderDistrict === data.receiverDistrict;
-        console.log(isSameDistrict);
+        // console.log(isSameDistrict);
      const parceIWeight = parseFloat(data.parcelWeight);
 let cost = 0;
 if (isDocument){
@@ -52,24 +65,35 @@ else{
     console.log(cost);
 
 
+    Swal.fire({
+  title: "Aggree with the cost?",
+  text: `You will be charged ${cost} BDT`,
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes!"
+}).then((result) => {
+  if (result.isConfirmed) {
+
+//  save parcels to database
+axiosSecure.post('/parcels', data)
+.then(res => {
+    console.log('after saving parcel',res.data);
+
 //     Swal.fire({
-//   title: "Aggree with the cost?",
-//   text: `You will be charged ${cost} BDT`,
-//   icon: "warning",
-//   showCancelButton: true,
-//   confirmButtonColor: "#3085d6",
-//   cancelButtonColor: "#d33",
-//   confirmButtonText: "Yes!"
-// }).then((result) => {
-//   if (result.isConfirmed) 
-// //     Swal.fire({
-// //     title: "Deleted!",
-// //     text: "Your file has been deleted.",
-// //     icon: "success"
-// //   });
-// });
-    
+//     title: "Deleted!",
+//     text: "Your file has been deleted.",
+//     icon: "success"
+//   });
+
+
+});
+
 }
+});
+    }
+
     return (
         <div className='bg-white'>
             <h2 className="text-3xl font-bold py-6 mt-6 px-6">Send A Parcel</h2>
@@ -108,10 +132,10 @@ else{
                  <fieldset className="fieldset">
                     {/* sender name */}
           <label className="label">Sender Name</label>
-          <input type="text" {...register("senderName", { required: "Sender name is required" })} className="input w-full" placeholder="Sender name"/>
+          <input type="text" {...register("senderName", { required: "Sender name is required" })} defaultValue={user?.displayName} className="input w-full" placeholder="Sender name"/>
 
           <label className="label">Sender Email</label>
-          <input type="email" {...register("senderEmail", { required: "Sender email is required" })} className="input w-full" placeholder="Sender email"/>
+          <input type="email" {...register("senderEmail", { required: "Sender email is required" })} defaultValue={user?.email} className="input w-full" placeholder="Sender email"/>
 
           <label className="label mt-4">Sender Address</label>
           <input type="text" {...register("senderAddress", { required: "Sender address is required" })} className="input w-full" placeholder="Sender address"/>
